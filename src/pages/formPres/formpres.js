@@ -1402,6 +1402,7 @@ const CompFormpres = () => {
         noValidate
         action="#"
         required>
+          <div class="d-none"><button type="submit" disabled class="none" aria-hidden="true"></button></div>
         <div className="container">
           <div className="row">
             <div className="col-md-6">

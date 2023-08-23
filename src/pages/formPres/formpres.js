@@ -1270,14 +1270,13 @@ const CompFormpres = () => {
           cargarDatosC(val, Ub);
         }
       });
-    } catch (error) {
+      } catch (error) {
       
     }
   };
 
   const cargarDatosC = async (val, ub) => {
     console.log(val, ub)
-    try {
     await fetch(URI + "comer/" + val)
       .then((resp) => resp.json())
       .then((data) => {
@@ -1387,9 +1386,6 @@ const CompFormpres = () => {
           cargarDatosP(val, ub);
         }
       });
-      } catch (error) {
-      
-    }
   };
 
   //#endregion
@@ -1402,11 +1398,10 @@ const CompFormpres = () => {
         noValidate
         action="#"
         required>
-          <div class="d-none"><button type="submit" disabled class="none" aria-hidden="true"></button></div>
         <div className="container">
           <div className="row">
             <div className="col-md-6">
-            <div class="d-none"><button type="submit" disabled class="none" aria-hidden="true"></button></div>
+              <div class="d-none"><button type="submit" disabled class="none" aria-hidden="true"></button></div>
               <h3 className="clrTitle">Datos del registro </h3>
             </div>
             <div className="col-md-6">

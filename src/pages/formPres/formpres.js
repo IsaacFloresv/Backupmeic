@@ -23,27 +23,47 @@ const CompFormpres = () => {
 
   //Obtener el numero del ultimo
   const NextRegister = async () => {
-    let headersList = {
-      "Accept": "*/*",
-      "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+    try {
+        let headersList = {
+            "Accept": "*/*",
+            "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+        }
+
+        let response = await fetch("https://fwmback-production.up.railway.app/amp", {
+            method: "PUT",
+            headers: headersList
+        });
+
+        if (!response.ok) {
+            throw new Error('Ocurrió un error al realizar la solicitud.');
+        }
+
+        setAgente(cookies.get('info'))
+        let data = await response.text();
+        nReporte = data
+        const may = nReporte
+
+        console.log(data)
+        console.log(data)
+        setidNR(data)
+
+        setnRegistro(may)
+    } catch (error) {
+        console.error(error);
+        alert("Ocurrio un error, se muestra")
+        /*const confirmRetry = window.confirm(
+            'Ocurrió un error al realizar la solicitud. ¿Desea intentar de nuevo?'
+        );
+
+        if (confirmRetry) {
+            NextRegister(); // Intentar de nuevo llamando a la función
+        }*/
     }
-
-    let response = await fetch("https://fwmback-production.up.railway.app/amp", {
-      method: "PUT",
-      headers: headersList
-    });
+};
 
 
-    setAgente(cookies.get('info'))
-    let data = await response.text();
-    nReporte = data
-    const may = nReporte
-
-    console.log(data)
-    setidNR(data)
-
-    setnRegistro(may)
-    /*let may = await response.text();
+      /*Parte del codigo antiguo de NextRegister
+      let may = await response.text();
     let rmay = (may++)
     nreport = rmay
 
@@ -52,137 +72,13 @@ const CompFormpres = () => {
     console.log(nreport, data)*/
 
     //setnRegistro(may)
-  };
-
-  const EnviarDatos = async (v) => {
-    const fecha = new Date().toLocaleString();
-    setFchareg(fecha)
-    if (v === 1) {
-      console.log("EnviarDatos se llama de forma reciproca")          
-    }else{
-      alert("Se procede a guardar los datos");
-    }
-    
-    var nagente = cookies.get('info')
-    let headersList = {
-      Accept: "*/*",
-      //"User-Agent": "Thunder Client (https://www.thunderclient.com)",
-      "Content-Type": "application/json",
-    };
-
-    if (!nReporte) {
-      console.log("nReporte esta null")
-      console.log(nReporte)
-      NextRegister()      
-    } else {
-      let bodyContent = JSON.stringify({
-        id_report: nReporte,
-        fchareg: fchareg,
-        id_agente: nagente,
-        fchacomplet: fchacomplet,
-        status: eRegistro,
-        origen_r: oRegistro,
-        tel_origen: toRegistro,
-        usuario_s: userspe,
-        us_obser: usobser,
-        tdia: tdiA,
-        ndia: ndiA,
-        nomba: nombA,
-        apell1a: apell1A,
-        apell2a: apell2A,
-        email: email,
-        email2: email2,
-        tel: tel,
-        tel2: tel2,
-        provi: provi,
-        canto: canto,
-        distr: distr,
-        materia: ubMat,
-        asunto: ubAsu,
-        bien: ubBie,
-        razon_social: rsocial,
-        nombre_fantasia: nfantasy,
-        tdic: tdiC,
-        ndic: ndiC,
-        fchahech: fchaHech,
-        fchagar: fchaGar,
-        desch: descH,
-        respe: resp,
-        id_audio: idaudio,
-        id_correo: idcorreo,
-      });
-
-      console.log(bodyContent)
-      let reqOptions = {
-        url: "https://fwmback-production.up.railway.app/asepress",
-        method: "POST",
-        headers: headersList,
-        data: bodyContent,
-      }
-
-      let response = await axios.request(reqOptions);
-      if (response.data.status === 400 || response.data.message === 'Validation error') {
-        nReporte = ++nReporte
-        console.log(nReporte)  
-        console.log("no se guardo el dato.")
-        EnviarDatos(1)
-      } else {
-        console.log(response)
-        alert("Registro Creado Correctamente....");
-        NextRegister()
-        //window.location.reload()
-      }
-    }
-  };
-
-  //Validacion de formulario antes de enviar correo
-  const validarbtnSubmit = (e) => {
-    e.preventDefault();
-    NextRegister()
-    const NR = 1;
-    if (NR != null) {
-      if (
-        (telorigen != "" && telorigen != " ") &&
-        (agente != "" && agente != " ") &&
-        (usobser != "" && usobser != " ") &&
-        (ndiA != "" && ndiA != " ") &&
-        (nombA != "" && nombA != " ") &&
-        (apell1A != "" && apell1A != " ") &&
-        (apell2A != "" && apell2A != " ") &&
-        (email2 != "" && email2 != " ") &&
-        (email != "" && email != " ") &&
-        (tel != "" && tel != " ") &&
-        (tel2 != "" && tel2 != " ") &&
-        (fchaHech != "" && fchaHech != " ") &&
-        (fchaGar != "" && fchaGar != " ") &&
-        (prov != false) &&
-        (cant != false) &&
-        (distr != false) &&
-        (ubMat != '') &&
-        (ubAsu != '') &&
-        (ubBie != '') &&
-        (tdiC != null && tdiC != " ") &&
-        (ndiC != null && ndiC != " ") &&
-        (nombC != "" && nombC != " ") &&
-        (apell1C != "" && apell1C != " ") &&
-        (apell2C != "" && apell2C != " ") &&
-        (descH != "" && descH != " ") &&
-        (resp != "" && resp != " ")
-      ) {
-        EnviarDatos();
-      } else {
-        alert("faltan datos");
-      }
-    } else {
-      alert("Por favor, confirme que es humano...");
-    }
-  };
 
   //#region useStates de los select
   //useState de datos
   const [ prov, setProv ] = useState([]);
   const [ cant, setCant ] = useState([]);
   const [ dist, setDist ] = useState([]);
+
   useEffect(() => {
     getProvs()
     getMaterias()
@@ -289,6 +185,8 @@ const CompFormpres = () => {
   const [ checkem2, setCheckEm2 ] = useState(true);
   const [ checktel1, setCheckTel1 ] = useState(false);
   const [ checkem1, setCheckEm1 ] = useState(false);
+  const [showCompanyNameC, setShowCompanyNameC] = useState(true);
+  const [showCompanyNameA, setShowCompanyNameA] = useState(true);
 
 
   //useState para guardar datos de ubicacion
@@ -358,27 +256,152 @@ const CompFormpres = () => {
   //#endregion
 
   //#region Validacion de inputs
-  function limpiardatosA() {
-    setndiA("");
-    setnombA("");
-    setapell1A("");
-    setapell2A("");
-    setidClValid("");
-    setnClValid("");
-    setpaClValid("");
-    setsaClValid("");
-  }
 
-  function limpiardatosC() {
-    setndiC("");
-    setnombC("");
-    setapell1C("");
-    setapell2C("");
-    setidClValidC("");
-    setnClValidC("");
-    setpaClValidC("");
-    setsaClValidC("");
-  }
+  const EnviarDatos = async (v) => {
+    let fecha = new Date().toLocaleString();
+    let fchareg = fecha;
+    setFchareg(fecha)
+
+    if (v === 1) {
+      console.log("EnviarDatos se llama de forma reciproca")          
+    }else{
+      alert("Se procede a guardar los datos");
+    }
+    
+    var nagente = cookies.get('info')
+    let headersList = {
+      Accept: "*/*",
+      //"User-Agent": "Thunder Client (https://www.thunderclient.com)",
+      "Content-Type": "application/json",
+    };
+
+    if (!nReporte) {
+      console.log("nReporte esta null")
+      console.log(nReporte)
+      NextRegister()      
+    } else {
+      let bodyContent = JSON.stringify({
+        id_report: ++nReporte,
+        fchareg: fchareg,
+        id_agente: nagente,
+        fchacomplet: fchacomplet,
+        status: eRegistro,
+        origen_r: oRegistro,
+        tel_origen: toRegistro,
+        usuario_s: userspe,
+        us_obser: usobser,
+        tdia: tdiA,
+        ndia: ndiA,
+        nomba: nombA,
+        apell1a: apell1A,
+        apell2a: apell2A,
+        email: email,
+        email2: email2,
+        tel: tel,
+        tel2: tel2,
+        provi: provi,
+        canto: canto,
+        distr: distr,
+        materia: ubMat,
+        asunto: ubAsu,
+        bien: ubBie,
+        razon_social: rsocial,
+        nombre_fantasia: nfantasy,
+        tdic: tdiC,
+        ndic: ndiC,
+        fchahech: fchaHech,
+        fchagar: fchaGar,
+        desch: descH,
+        respe: resp,
+        id_audio: idaudio,
+        id_correo: idcorreo,
+      });
+
+      console.log(bodyContent)
+      let reqOptions = {
+        url: "https://fwmback-production.up.railway.app/asepress",
+        method: "POST",
+        headers: headersList,
+        data: bodyContent,
+      }
+
+      let response = await axios.request(reqOptions);
+      if (response.data.status === 400 || response.data.message === 'Validation error') {
+        console.log(nReporte)  
+        console.log("no se guardo el dato.")
+        EnviarDatos(1)
+      } else {
+        console.log(response)
+        alert("Registro Creado Correctamente....");
+        NextRegister()
+        //window.location.reload()
+      }
+    }
+  };
+
+  //Validacion de formulario antes de enviar correo
+  const validarbtnSubmit = (e) => {
+    e.preventDefault();
+    NextRegister()
+    const NR = 1;
+    if (NR != null) {
+      if (
+        (telorigen != "" && telorigen != " ") &&
+        (agente != "" && agente != " ") &&
+        (usobser != "" && usobser != " ") &&
+        (ndiA != "" && ndiA != " ") &&
+        (nombA != "" && nombA != " ") &&
+        (apell1A != "" && apell1A != " ") &&
+        (apell2A != "" && apell2A != " ") &&
+        (email2 != "" && email2 != " ") &&
+        (email != "" && email != " ") &&
+        (tel != "" && tel != " ") &&
+        (tel2 != "" && tel2 != " ") &&
+        (fchaHech != "" && fchaHech != " ") &&
+        (fchaGar != "" && fchaGar != " ") &&
+        (prov != false) &&
+        (cant != false) &&
+        (distr != false) &&
+        (ubMat != '') &&
+        (ubAsu != '') &&
+        (ubBie != '') &&
+        (tdiC != null && tdiC != " ") &&
+        (ndiC != null && ndiC != " ") &&
+        (nombC != "" && nombC != " ") &&
+        (apell1C != "" && apell1C != " ") &&
+        (apell2C != "" && apell2C != " ") &&
+        (descH != "" && descH != " ") &&
+        (resp != "" && resp != " ")
+      ) {
+        EnviarDatos();
+      } else {
+        alert("faltan datos");
+      }
+    } else {
+      alert("Por favor, confirme que es humano...");
+    }
+  };
+  function limpiardatosA() {
+    setndiA('')
+    setnombA("")
+    setapell1A("")
+    setapell2A("")
+    setidClValid('')
+    setnClValid('')
+    setpaClValid('')
+    setsaClValid('')
+}
+
+function limpiardatosC() {
+    setndiC('')
+    setnombC("")
+    setapell1C("")
+    setapell2C("")
+    setidClValidC('')
+    setnClValidC('')
+    setpaClValidC('')
+    setsaClValidC('')
+}
 
   function cleanForm() {
     limpiardatosA()
@@ -457,13 +480,15 @@ const CompFormpres = () => {
   };
 
   const input_TIDchange = (val, tID) => {
-    setselectNidA(val);
-    const valor = val;
-    settdiA(tID);
-    limpiardatosA();
+    setselectNidA(val)
+    const valor = val
+    settdiA(tID)
+    limpiardatosA()
 
     switch (valor) {
       case 1:
+        setShowCompanyNameA(true);
+        limpiardatosA()
         setlblinputName("Nombre");
         setlblapell1A("Primer Apellido");
         setfbNameA("Por favor, ingrese su nombre.");
@@ -472,9 +497,11 @@ const CompFormpres = () => {
         setclassdivDNI("col-md-4");
         setinvisibleAp1("d-block col-md-4");
         setinvisibleAp2("d-block col-md-4");
+        limpiardatosA()
         break;
 
       case 2:
+        limpiardatosA()
         setlblinputName("Nombre");
         setlblapell1A("Primer Apellido");
         setfbNameA("Por favor, ingrese su nombre.");
@@ -483,21 +510,25 @@ const CompFormpres = () => {
         setinvisibleAp2("d-block col-md-4");
         setclassdivnomb("col-md-4");
         setclassdivDNI("col-md-4");
+        limpiardatosA()
         break;
 
       case 3:
+        limpiardatosA()
         setlblinputName("Nombre de Fantasía (Opcional)");
         setinvisibleAp1("d-none col-md-1");
         setinvisibleAp2("d-none col-md-1");
         setfbNameA("");
         setfbapell1A("");
-        setapell1A("Desconocido");
-        setapell2A("Desconocido");
+        setapell1A("NO INDICA");
+        setapell2A("NO INDICA");
         setclassdivnomb("col-md-5");
         setclassdivDNI("col-md-3");
+        limpiardatosA()
         break;
 
       case 4:
+        limpiardatosA()
         setlblinputName("Nombre");
         setlblapell1A("Primer Apellido");
         setfbNameA("Por favor, ingrese su nombre.");
@@ -506,17 +537,20 @@ const CompFormpres = () => {
         setinvisibleAp2("d-block col-md-4");
         setclassdivnomb("col-md-4");
         setclassdivDNI("col-md-4");
+        limpiardatosA()
         break;
     }
-  };
+}
 
-  const input_TIDCchange = (val, tID) => {
-    setselectNidC(val);
-    settdiC(tID);
-    const valor = val;
+const input_TIDCchange = (val, tID) => {
+    setselectNidC(val)
+    settdiC(tID)
+    const valor = val
 
     switch (valor) {
       case 1:
+        setShowCompanyNameC(true);
+        limpiardatosC()
         setlblinputNameC("Nombre");
         setlblapell1C("Primer Apellido");
         setfbNameC("Por favor, ingrese su nombre.");
@@ -530,6 +564,7 @@ const CompFormpres = () => {
         break;
 
       case 2:
+        limpiardatosC()
         setlblinputNameC("Nombre");
         setlblapell1C("Primer Apellido");
         setfbNameC("Por favor, ingrese su nombre.");
@@ -543,13 +578,14 @@ const CompFormpres = () => {
         break;
 
       case 3:
+        limpiardatosC()
         setlblinputNameC("Nombre de Fantasía (Opcional)");
         setfbNameC("");
         setfbapell1C("");
         setinvisibleAp1C("d-none col-md-1");
         setinvisibleAp2C("d-none col-md-1");
-        setapell1C("Desconocido");
-        setapell2C("Desconocido");
+        setapell1C("NO INDICA");
+        setapell2C("NO INDICA");
         setnombC('')
         setndiC('')
         setclassdivnombC("col-md-5");
@@ -560,6 +596,7 @@ const CompFormpres = () => {
         break;
 
       case 4:
+        limpiardatosC()
         setlblinputNameC("Nombre");
         setlblapell1C("Primer Apellido");
         setfbNameC("Por favor, ingrese su nombre.");
@@ -573,13 +610,15 @@ const CompFormpres = () => {
         break;
 
       case 5:
+        setShowCompanyNameC(true);
+        limpiardatosC()
         setlblinputNameC("Nombre de Fantasía (Opcional) Nota: si no se da el dato digitar 'No indica'.");
         setlblapell1C("");
         setfbNameC("");
         setfbapell1C("");
         setndiC("0000000000");
-        setapell1C("Desconocido");
-        setapell2C("Desconocido");
+        setapell1C("NO INDICA");
+        setapell2C("NO INDICA");
         setNfantasy("NO INDICA")
         setinvisibleAp1C("d-none col-md-2");
         setinvisibleAp2C("d-none col-md-2");
@@ -588,8 +627,7 @@ const CompFormpres = () => {
         setlblPHNombFantacyC("");
         break;
     }
-  };
-
+}
   //#endregion
 
 
@@ -599,7 +637,7 @@ const CompFormpres = () => {
   const changeTeloEmail = (val, ub) => {
     if (ub === 1) {
       if (val?.target.checked) {
-        setEmail2("No indica");
+        setEmail2("NO INDICA");
         setdehabilem2(true);
         setemClValid2("");
         setCheckEm2(true)
@@ -623,7 +661,7 @@ const CompFormpres = () => {
       }
     }else if (ub === 3) {
       if (val?.target.checked) {
-        setEmail("No indica");
+        setEmail("NO INDICA");
         setdehabilem1(true);
         setemClValid("");
         setCheckEm1(true)
@@ -771,13 +809,11 @@ const CompFormpres = () => {
 
   //Validacion campo nombre
   const ValidarinputNomb = (val, ced) => {
-    try {
-      const valor = val;
-      setnombA(valor);
-  
-      if (lblinputName === "Nombre") {
-        const Ced = ced === 1 ? ndiA : ced;
-        setnombA(valor);
+    const valor = val
+    setnombA(valor)
+    if (lblinputName == "Nombre") {
+        const Ced = (ced == 1) ? ndiA : ced
+        setnombA(valor)
         if (valor?.toString().length >= 1) {
           let resp;
           if (ced === 1) {
@@ -814,366 +850,336 @@ const CompFormpres = () => {
         } else {
           setnClValid("is-invalid");
         }
-      } else if (
-        lblinputName === "Nombre de Empresa o institucion" ||
-        lblinputName === "Nombre de Fantasía (Opcional)"
-      ) {
-        const Ced = ced === 1 ? ndiA : ced;
-  
-        if (valor?.toString().length >= 1) {
-          let resp;
-          if (Ced.toString().length === 10) {
-            resp = validarTextEsp(valor);
-          }
-  
-          if (resp) {
-            setnClValid("is-valid");
-          } else {
-            setnClValid("is-invalid");
-          }
+    } else if (
+      lblinputName === "Nombre de Empresa o institucion" ||
+      lblinputName === "Nombre de Fantasía (Opcional)"
+    ) {
+      const Ced = ced === 1 ? ndiA : ced;
+
+      if (valor?.toString().length >= 1) {
+        let resp;
+        if (Ced.toString().length === 10) {
+          resp = validarTextEsp(valor);
+        }
+
+        if (resp) {
+          setnClValid("is-valid");
         } else {
           setnClValid("is-invalid");
-        }
-      }
-    } catch (error) {
-      // Se muestra el error en consola
-      console.error("Error en ValidarinputNomb:", error);
-      setnClValid("is-invalid");
-    }
-  };
-
-  const ValidarinputApp1 = (val) => {
-    try {
-      const valor = val;
-      setapell1A(valor);
-      if (lblapell1A !== "Nombre de Fantasía (Opcional)") {
-        if (val?.toString().length >= 1) {
-          const resp = validarText(valor);
-          if (resp) {
-            setpaClValid("is-valid");
-          } else {
-            setpaClValid("is-invalid");
-          }
-        } else {
-          setpaClValid("is-invalid");
-        }
-      }
-    } catch (error) {
-      // Se muestra el error en consola
-      console.error("Error:", error);
-    }
-  };
-  
-
-  const ValidarinputApp2 = (val) => {
-    try {
-      const valor = val;
-      setapell2A(valor);
-      if (lblapell1A != "Nombre de Fantasía (Opcional)") {
-        if (val?.toString().length >= 1) {
-          const resp = validarText(valor.trimEnd());
-          if (resp) {
-            setsaClValid("is-valid");
-          } else {
-            setsaClValid("is-invalid");
-          }
-        } else {
-          setsaClValid("is-invalid");
-        }
-      }
-    } catch (error) {
-      // Se muestra el error en consola
-      console.error("Ha ocurrido un error:", error);
-    }
-  };
-  
-
-  const ValidarinputNombC = (val, ced) => {
-    try {
-      if (lblinputNameC === "Nombre") {
-        const valor = val;
-        const Ced = ced === 2 ? ndiA : ced;
-        setnombC(valor);
-        setRsocial(valor);
-        if (valor?.toString().length >= 1) {
-          if (ced === 2) {
-            const resp = validarText(valor);
-            if (resp) {
-              setnClValidC("is-valid");
-            } else {
-              setnClValidC("is-invalid");
-            }
-          } else if (Ced.toString().length == 9) {
-            const resp = validarText(valor);
-            if (resp) {
-              setnClValidC("is-valid");
-            } else {
-              setnClValidC("is-invalid");
-            }
-          } else if (Ced.toString().length == 10) {
-            const resp = validarTextEsp(valor);
-            if (resp) {
-              setnClValidC("is-valid");
-            } else {
-              setnClValidC("is-invalid");
-            }
-          } else if (Ced.toString().length == 12 || selectNidC == 4) {
-            const resp = validarTextEsp(valor);
-            if (resp) {
-              setnClValidC("is-valid");
-            } else {
-              setnClValidC("is-invalid");
-            }
-          }
-        } else {
-          setnClValidC("is-invalid");
-        }
-      } else if (
-        lblinputNameC == "Nombre de Empresa o institucion" ||
-        lblinputNameC == "Nombre de Fantasía (Opcional)" && tdiC != 'NO INDICA'
-      ) {
-        const valor = val;
-        const Ced = ced === 2 ? ndiC : ced;
-        setnombC(valor);
-        if (valor?.toString().length >= 0) {
-          if (Ced.toString().length == 10) {
-            const resp = validarTextEsp(valor);
-            if (resp) {
-              setnClValidC("is-valid");
-            } else {
-              setnClValidC("is-invalid");
-            }
-          }
-          else if(valor.toString().length >= 1) {
-            const resp = validarTextEsp(valor);
-            if (resp) {
-              setnClValidC("is-valid");
-            } else {
-              setnClValidC("is-invalid");
-            }
-          }
-        } else {
-          setnClValidC("is-invalid");
-        }
-      } else if (lblinputNameC == "Nombre de Fantasía (Opcional) Nota: si no se da el dato digitar 'No indica'." && tdiC === 'NO INDICA') {
-        const valor = val;
-        setnombC(valor);
-        setRsocial(valor)
-        if (valor.toString().length >= 1) {
-          const resp = validarTextEsp(valor);
-          if (resp) {
-            setnClValidC("is-valid");
-          } else {
-            setnClValidC("is-invalid");
-          }
-        } else {
-          setnClValidC("is-invalid");
-        }
-      }
-    } catch (error) {
-      // // Se muestra el error en consola
-      console.error("Error en ValidarinputNombC:", error);
-    }
-  };
-
-  const ValidarinputApp1C = (val) => {
-    try {
-      console.log(val);
-      const valor = val;
-      setapell1C(valor);
-      setNfantasy(valor);
-      if (lblapell1C !== "Nombre de Fantasía (Opcional)") {
-        if (val.toString().length >= 1) {
-          const resp = validarText(val);
-          if (resp) {
-            setpaClValidC("is-valid");
-          } else {
-            setpaClValidC("is-invalid");
-          }
-        } else {
-          setpaClValidC("is-invalid");
-        }
-      }
-    } catch (error) {
-      console.error("Se produjo un error:", error);
-      // Se muestra el error en consola
-    }
-  };
-  
-
-  const ValidarinputApp2C = (val) => {
-    try {
-      console.log(val)
-      const valor = val;
-      setapell2C(valor);
-      if (val.toString().length >= 1) {
-        const resp = validarText(valor.trimEnd());
-        if (resp) {
-          setsaClValidC("is-valid");
-        } else {
-          setsaClValidC("is-invalid");
         }
       } else {
-        setsaClValidC("is-invalid");
+        setnClValid("is-invalid");
       }
-    } catch (error) {
-      // Se muestra el error en consola
-      console.error("Ocurrió un error:", error);
     }
-  };
-  
+}
 
-  const ValidarinputHecho = (val) => {
-    const valor = val.trimStart();
-    setdescH(valor);
-
-    setNfantasy(apell1C);
-    if (val.toString().length >= 0 && val != ' ') {
-      setdhClValid("is-valid");
-    } else {
-      setdhClValid("is-invalid");
+const ValidarinputApp1 = (val) => {
+    const valor = val
+    setapell1A(valor)
+    if (lblapell1A != 'Nombre de Fantasía (Opcional)') {
+        if (val?.toString().length >= 1) {
+            const resp = validarText(valor)
+            if (resp) {
+                setpaClValid('is-valid')
+            } else {
+                setpaClValid('is-invalid')
+            }
+        } else {
+            setpaClValid('is-invalid')
+        }
     }
-  };
+}
 
-  const ValidarinputResp = (val) => {
-    const valor = val.trimStart();
-    setResp(valor);
-
-    setNfantasy(apell1C);
-
-    if (val.toString().length >= 0 && val != ' ') {
-      setRespClValid("is-valid");
-      setdehabilSubmit(false);
-    } else {
-      setRespClValid("is-invalid");
+const ValidarinputApp2 = (val) => {
+    const valor = val
+    console.log(val)
+    setapell2A(valor)
+    if (lblapell1A != 'Nombre de Fantasía (Opcional)') {
+        if (val?.toString().length >= 1) {
+            const resp = validarText(valor.trimEnd())
+            console.log(valor, resp)
+            if (resp) {
+                setsaClValid('is-valid')
+            } else {
+                setsaClValid('is-invalid')
+            }
+        } else {
+            setsaClValid('is-invalid')
+        }
     }
-  };
+}
 
-  //Validacion del campo inputCed del afectado
-  const validarInputCedA = (val, ub) => {
-    const fecha = new Date().toLocaleString();
-    setFchareg(fecha)
-    const valor = val;
-    setndiA(valor);
-    if (ub == 1) {
-      if (selectNidA === 1) {
-        const resp = /^[0-9]{9}$/.test(valor);
-        if (resp && valor.toString().length === 9) {
-          setidClValid("is-valid");
-          cargarDatosP(val, ub);
-        } else {
-          setidClValid("is-invalid");
-          setnClValid("");
-          setpaClValid("");
-          setsaClValid("");
-          setnombA("");
-          setapell1A("");
-          setapell2A("");
-          document.getElementById("errorCed").innerHTML = "";
-        }
-      } else if (selectNidA === 2) {
-        const resp = /^[a-zA-Z0-9]{9}$/.test(val);
-        if (resp && valor.toString().length === 9) {
-          setidClValid("is-valid");
-        } else {
-          setnombA("");
-          setapell1A("");
-          setapell2A("");
-          document.getElementById("errorCed").innerHTML = "";
-        }
-      } else if (selectNidA === 3) {
-        const resp = /^[a-zA-Z0-9]{10}$/.test(val);
-        if (resp && valor.toString().length === 10) {
-          setidClValid("is-valid");
-          cargarDatosC(valor, 1);
-        } else {
-          setidClValid("is-invalid");
-          setnClValid("is-invalid");
-          setsaClValid("is-invalid");
-          setnombA("");
-          setapell1A("");
-          setapell2A("");
-          document.getElementById("errorCed").innerHTML = "";
-        }
-      } else if (selectNidA === 4) {
-        const resp = /^[0-9]{12}$/.test(valor);
-        if (resp && valor.toString().length === 12) {
-          setidClValid("is-valid");
-        } else {
-          setidClValid("is-invalid");
-          setnombA("");
-          setapell1A("");
-          setapell2A("");
-          document.getElementById("errorCed").innerHTML = "";
-        }
+const ValidarinputNombC = (val, ced) => {
+  const valor = val;
+  setnombC(valor);
+  setRsocial(valor);
+  if (lblinputNameC === "Nombre") {
+    const Ced = ced === 2 ? ndiC : ced;
+    setnombC(valor);
+    setRsocial(valor);
+    if (valor?.toString().length >= 1) {
+      let resp;
+      if (ced === 2) {
+        resp = validarText(valor);
+      } else if (Ced.toString().length === 9) {
+        resp = validarText(valor);
+      } else if (Ced.toString().length === 10) {
+        resp = validarTextEsp(valor);
+      } else if (Ced.toString().length === 12 || selectNidC === 4) {
+        resp = validarText(valor);
       }
-    } else if (ub == 2) {
-      cargarDatosC(val, ub);
-    }
-  };
 
-  //Validacion del campo inputCed del comerciante
-  const validarInputCedC = (val, ub) => {
-    const valor = val;
-    setndiC(valor);
-    console.log(val, ub, selectNidC)
-    if (ub == 2) {
-      if (selectNidC === 1) {
-        const resp = /^[0-9]{9}$/.test(valor);
-        if (resp && valor.toString().length === 9) {
-          setidClValidC("is-valid");
-          cargarDatosP(val, ub);
-        } else {
-          setidClValidC("is-invalid");
-          setnClValidC("");
-          setpaClValidC("");
-          setsaClValidC("");
-          setnombC("");
-          setapell1C("");
-          setapell2C("");
-          document.getElementById("errorCedC").innerHTML = "";
+      if (resp) {
+        setnClValidC("is-valid");
+      } else if(valor?.toString().length >= 1){
+        const resp = validarText(valor);
+        if (ced === 2) {
+          resp = validarText(valor);
+        } else if (Ced.toString().length === 9) {
+          resp = validarText(valor);
+        } else if (Ced.toString().length === 10) {
+          resp = validarTextEsp(valor);
+        } else if (Ced.toString().length === 12 || selectNidC === 4) {
+          resp = validarText(valor);
         }
-      } else if (selectNidC === 2) {
-        const resp = /^[a-zA-Z0-9]{9}$/.test(val);
-        if (resp && valor.toString().length === 9) {
-          setidClValidC("is-valid");
+        if (resp) {
+          setnClValidC("is-valid");
         } else {
-          setnombC("");
-          setapell1C("");
-          setapell2C("");
-          document.getElementById("errorCedC").innerHTML = "";
-        }
-      } else if (selectNidC === 3) {
-        const resp = /^[a-zA-Z0-9]{10}$/.test(val);
-        if (resp && valor.toString().length === 10) {
-          setidClValidC("is-valid");
-          console.log(resp, val, ub)
-          cargarDatosC(val, ub);
-        } else {
-          setidClValidC("is-invalid");
           setnClValidC("is-invalid");
-          setsaClValidC("is-invalid");
-          setnombC("");
-          setapell1C("");
-          setapell2C("");
-          document.getElementById("errorCedC").innerHTML = "";
         }
-      } else if (selectNidC === 4) {
-        const resp = /^[0-9]{12}$/.test(valor);
-        if (resp && valor.toString().length === 12) {
-          setidClValidC("is-valid");
+      }else {
+        setnClValidC("is-invalid");
+      }
+    } else {
+      setnClValidC("is-invalid");
+    }
+  } else if (
+    lblinputNameC == "Nombre de Empresa o institucion" ||
+    lblinputNameC == "Nombre de Fantasía (Opcional)" && tdiC != 'NO INDICA'
+  ) {
+    const valor = val;
+    const Ced = ced === 2 ? ndiC : ced;
+    setnombC(valor);
+    if (valor?.toString().length >= 0) {
+      if (Ced.toString().length == 10) {
+        const resp = validarTextEsp(valor);
+        if (resp) {
+          setnClValidC("is-valid");
         } else {
-          setidClValidC("is-invalid");
-          setnombC("");
-          setapell1C("");
-          setapell2C("");
-          document.getElementById("errorCedC").innerHTML = "";
+          setnClValidC("is-invalid");
         }
       }
-    } else if (ub == 1) {
-      validarInputCedA(val, ub);
+      else if(valor.toString().length >= 1) {
+        const resp = validarTextEsp(valor);
+        if (resp) {
+          setnClValidC("is-valid");
+        } else {
+          setnClValidC("is-invalid");
+        }
+      }
+    } else {
+      setnClValidC("is-invalid");
     }
-  };
+  } else if (lblinputNameC == "Nombre de Fantasía (Opcional) Nota: si no se da el dato digitar 'No indica'." && tdiC === 'NO INDICA') {
+    const valor = val;
+    setnombC(valor);
+    setRsocial(valor)
+    if (valor.toString().length >= 1) {
+      const resp = validarTextEsp(valor);
+      if (resp) {
+        setnClValidC("is-valid");
+      } else {
+        setnClValidC("is-invalid");
+      }
+    } else {
+      setnClValidC("is-invalid");
+    }
+  }
+}
+
+const ValidarinputApp1C = (val) => {
+    const valor = val
+    setapell1C(valor)
+    console.log(valor)
+    if (lblapell1C != 'Nombre de Fantasía (Opcional)') {
+        if (val?.toString().length >= 1) {
+            const resp = validarText(val)
+            if (resp) {
+                setpaClValidC('is-valid')
+            } else {
+                setpaClValidC('is-invalid')
+            }
+        } else {
+            setpaClValidC('is-invalid')
+        }
+    }
+}
+
+const ValidarinputApp2C = (val) => {
+    const valor = val
+    setapell2C(valor)
+    if (val?.toString().length >= 1) {
+        const resp = validarText(valor.trimEnd())
+        if (resp) {
+            setsaClValidC('is-valid')
+        } else {
+            setsaClValidC('is-invalid')
+        }
+    } else {
+        setsaClValidC('is-invalid')
+    }
+}
+
+const ValidarinputHecho = (val) => {
+    const valor = val
+    setdescH(valor)
+    console.log(valor)
+
+    if (val.toString().length >= 0) {
+        setdhClValid('is-valid')
+        setdehabilSubmit(false)
+    } else {
+        setdhClValid('is-invalid')
+    }
+}
+
+const ValidarinputResp = (val) => {
+  const valor = val.trimStart();
+  setResp(valor);
+
+  setNfantasy(apell1C);
+
+  if (val.toString().length >= 0 && val != ' ') {
+    setRespClValid("is-valid");
+    setdehabilSubmit(false);
+  } else {
+    setRespClValid("is-invalid");
+  }
+};
+
+//Validacion del campo inputCed del afectado
+const validarInputCedA = (val, ub) => {
+  const valor = val;
+  setndiA(valor);
+  if (ub == 1) {
+    if (selectNidA === 1) {
+      const resp = /^[0-9]{9}$/.test(valor);
+      if (resp && valor.toString().length === 9) {
+        setidClValid("is-valid");
+        cargarDatosP(val, ub);
+      } else {
+        setidClValid("is-invalid");
+        setnClValid("");
+        setpaClValid("");
+        setsaClValid("");
+        setnombA("");
+        setapell1A("");
+        setapell2A("");
+        document.getElementById("errorCed").innerHTML = "";
+      }
+    } else if (selectNidA === 2) {
+      const resp = /^[a-zA-Z0-9]{9}$/.test(val);
+      if (resp && valor.toString().length === 9) {
+        setidClValid("is-valid");
+      } else {
+        setnombA("");
+        setapell1A("");
+        setapell2A("");
+        document.getElementById("errorCed").innerHTML = "";
+      }
+    } else if (selectNidA === 3) {
+      const resp = /^[a-zA-Z0-9]{10}$/.test(val);
+      if (resp && valor.toString().length === 10) {
+        setidClValid("is-valid");
+        cargarDatosC(valor, 1);
+      } else {
+        setidClValid("is-invalid");
+        setnClValid("is-invalid");
+        setsaClValid("is-invalid");
+        setnombA("");
+        setapell1A("");
+        setapell2A("");
+        document.getElementById("errorCed").innerHTML = "";
+      }
+    } else if (selectNidA === 4) {
+      const resp = /^[0-9]{12}$/.test(valor);
+      if (resp && valor.toString().length === 12) {
+        setidClValid("is-valid");
+      } else {
+        setidClValid("is-invalid");
+        setnombA("");
+        setapell1A("");
+        setapell2A("");
+        document.getElementById("errorCed").innerHTML = "";
+      }
+    }
+  } else if (ub == 2) {
+    cargarDatosC(val, ub);
+  }
+};
+
+//Validacion del campo inputCed del comerciante
+const validarInputCedC = (val, ub) => {
+  const valor = val;
+  setndiC(valor);
+  console.log(val, ub, selectNidC)
+  if (ub == 2) {
+    if (selectNidC === 1) {
+      const resp = /^[0-9]{9}$/.test(valor);
+      if (resp && valor.toString().length === 9) {
+        setidClValidC("is-valid");
+        cargarDatosP(val, ub);
+      } else {
+        setidClValidC("is-invalid");
+        setnClValidC("");
+        setpaClValidC("");
+        setsaClValidC("");
+        setnombC("");
+        setapell1C("");
+        setapell2C("");
+        document.getElementById("errorCedC").innerHTML = "";
+      }
+    } else if (selectNidC === 2) {
+      const resp = /^[a-zA-Z0-9]{9}$/.test(val);
+      if (resp && valor.toString().length === 9) {
+        setidClValidC("is-valid");
+      } else {
+        setnombC("");
+        setapell1C("");
+        setapell2C("");
+        document.getElementById("errorCedC").innerHTML = "";
+      }
+    } else if (selectNidC === 3) {
+      const resp = /^[a-zA-Z0-9]{10}$/.test(val);
+      if (resp && valor.toString().length === 10) {
+        setidClValidC("is-valid");
+        console.log(resp, val, ub)
+        cargarDatosC(val, ub);
+      } else {
+        setidClValidC("is-invalid");
+        setnClValidC("is-invalid");
+        setsaClValidC("is-invalid");
+        setnombC("");
+        setapell1C("");
+        setapell2C("");
+        document.getElementById("errorCedC").innerHTML = "";
+      }
+    } else if (selectNidC === 4) {
+      const resp = /^[0-9]{12}$/.test(valor);
+      if (resp && valor.toString().length === 12) {
+        setidClValidC("is-valid");
+      } else {
+        setidClValidC("is-invalid");
+        setnombC("");
+        setapell1C("");
+        setapell2C("");
+        document.getElementById("errorCedC").innerHTML = "";
+      }
+    }
+  } else if (ub == 1) {
+    validarInputCedA(val, ub);
+  }
+};
   //#endregion
 
   //#region Funciones para carga de Datos
@@ -1185,46 +1191,75 @@ const CompFormpres = () => {
 
   //Mostrar todas las provincias
   const getProvs = async () => {
-    const res = await axios.get(URI + "prov/");
-    setProv(res.data);
-
-    //getCants();
+    try {
+      const res = await axios.get(URI + "prov/");
+      setProv(res.data);
+    } catch (error) {
+      console.error("Error al obtener los datos de provincia:", error);
+    }
   };
 
   //Mostrar los cantones por provincia
   const getCants = async (v) => {
-    const val = v?.target.value;
-    if (val != null) {
-      setdeshabCant(false);
-
-
-      let index = v.target.selectedIndex;
-      let ubprov = v.target.options[ index ].text;
-      setProvi(ubprov);
-      setidProv(val);
-      const res = await axios.get(URI + "cant/" + val);
-      setCant(res.data);
-    } else {
-      setubCant("0");
-      setubDist("0");
+    try {
+      const val = v?.target.value;
+      if (val != null) {
+        setdeshabCant(false);
+  
+        let index = v.target.selectedIndex;
+        let ubprov = v.target.options[index].text;
+        setProvi(ubprov);
+        setidProv(val);
+        const res = await axios.get(URI + "cant/" + val);
+        setCant(res.data);
+      } else {
+        setubCant("0");
+        setubDist("0");
+      }
+    } catch (error) {
+      console.error("Error al obtener los datos del cantón:", error);
+  
+      const shouldRetry = window.confirm(
+        "Ocurrió un error al obtener los datos del cantón. ¿Desea intentar de nuevo?"
+      );
+  
+      if (shouldRetry) {
+        // Llama la función nuevamente para reintentar.
+        getCants(v);
+      }
     }
   };
+  
 
   //Mostrar los distritos por canton
   const getDists = async (v) => {
-    const val = v?.target.value;
-    if (val != null) {
-      v === 0 ? setdeshabDist(true) : setdeshabDist(false);
-
-      let index = v.target.selectedIndex;
-      let ubcant = v.target.options[ index ].text;
-      setCanto(ubcant);
-      setidCant(val);
-      const res = await axios.get(URI + "dist/" + val);
-      setDist(res.data);
-      setdeshabMateria(false)
+    try {
+      const val = v?.target.value;
+      if (val != null) {
+        v === 0 ? setdeshabDist(true) : setdeshabDist(false);
+  
+        let index = v.target.selectedIndex;
+        let ubcant = v.target.options[index].text;
+        setCanto(ubcant);
+        setidCant(val);
+        const res = await axios.get(URI + "dist/" + val);
+        setDist(res.data);
+        setdeshabMateria(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener los datos del distrito:", error);
+  
+      const shouldRetryDistrito = window.confirm(
+        "Ocurrió un error al obtener los datos del distrito. ¿Desea intentar de nuevo?"
+      );
+  
+      if (shouldRetryDistrito) {
+        // Llama la función nuevamente para reintentar.
+        getDists(v);
+      }
     }
   };
+  
 
   //Metodo para definir el distrito
   const defubdist = (v) => {
@@ -1239,30 +1274,49 @@ const CompFormpres = () => {
   };
 
   const getMaterias = async () => {
-    const res = await axios.get(URI + "mat/");
-    setMateria(res.data);
+    try {
+      const res = await axios.get(URI + "mat/");
+      setMateria(res.data);
+    } catch (error) {
+      console.error("Se ha producido un error al obtener las materias:", error);
+    }
   };
 
   //Mostrar los cantones por provincia
   const getAsuntConsultado = async (v) => {
-    const val = v?.target.value;
-
-    if (val != null) {
-      setdeshabAConsultado(false);
-
-      let index = v.target.selectedIndex;
-      let Materia = v.target.options[ index ].text;
-      setubMat(Materia);
-      setidMat(val);
-
-      const res = await axios.get(URI + "asu/" + val);
-      setAsunto(res.data);
-      //getBienes();
-    } else {
-      setubCant("0");
-      setubDist("0");
+    try {
+      const val = v?.target.value;
+  
+      if (val != null) {
+        setdeshabAConsultado(false);
+  
+        let index = v.target.selectedIndex;
+        let Materia = v.target.options[index].text;
+        setubMat(Materia);
+        setidMat(val);
+  
+        const res = await axios.get(URI + "asu/" + val);
+        setAsunto(res.data);
+        //getBienes();
+      } else {
+        setubCant("0");
+        setubDist("0");
+      }
+    } catch (error) {
+      console.error("Error al obtener los datos del asunto consultado:", error);
+  
+      const shouldRetryAsunto = window.confirm(
+        "Ocurrió un error al obtener los datos del asunto. ¿Desea intentar de nuevo?"
+      );
+  
+      if (shouldRetryAsunto) {
+        // Llama la función nuevamente para reintentar.
+        getAsuntConsultado(v);
+      }
     }
   };
+  
+  
 
   const defAsunto = async (v) => {
     const val = v?.target.value;
@@ -1276,10 +1330,15 @@ const CompFormpres = () => {
 
   //Mostrar los distritos por canton
   const getBienes = async (v) => {
-    const res = await axios.get(URI + "bie/");
-    setBien(res.data);
-    setdeshabBien(false);
+    try {
+      const res = await axios.get(URI + "bie/");
+      setBien(res.data);
+      setdeshabBien(false);
+    } catch (error) {
+      console.error("Se ha producido un error al obtener los bienes:", error);
+    }
   };
+  
 
   const defbien = (v) => {
     if (v.label != null) {
@@ -1294,145 +1353,159 @@ const CompFormpres = () => {
   //Solicitud a DB
   const cargarDatosP = async (val, ub) => {
     const Ub = ub;
-    await fetch(URI + "pers/" + val)
-      .then((resp) => resp.json())
-      .then((data) => {
-        const Perso = data[ 0 ];
+    console.log(val, Ub);
+
+    try {
+        const response = await fetch(URI + 'pers/' + val);
+        if (!response.ok) {
+            throw new Error('Ocurrió un error al obtener los datos de la cédula.');
+        }
+
+        const data = await response.json();
+        const Perso = data[0];
         setPers(Perso);
-        if (ub == 1 && selectNidA == 1) {
-          const nombre = Perso?.nombre;
-          setnombA(nombre);
-          setapell1A(Perso?.first_last_name);
-          setapell2A(Perso?.second_last_name);
-          ValidarinputNomb(nombre, val);
-          ValidarinputApp1(Perso?.first_last_name);
-          ValidarinputApp2(Perso?.second_last_name.trimEnd());
-        } else if (ub == 2 && selectNidC == 1) {
-          const nombre = Perso?.nombre;
-          setnombC(nombre);
-          setapell1C(Perso?.first_last_name);
-          setapell2C(Perso?.second_last_name);
-          ValidarinputNombC(nombre, val);
-          ValidarinputApp1C(Perso?.first_last_name);
-          ValidarinputApp2C(Perso?.second_last_name.trimEnd());
-        } else if (ub == 1 && selectNidA == 3) {
-          cargarDatosC(val, Ub);
+        console.log(Perso);
+
+        if ((ub == 1) && (selectNidA == 1)) {
+            const nombre = Perso?.nombre;
+            setnombA(nombre);
+            setapell1A(Perso?.first_last_name);
+            setapell2A(Perso?.second_last_name);
+            ValidarinputNomb(nombre, val);
+            ValidarinputApp1(Perso?.first_last_name);
+            ValidarinputApp2(Perso?.second_last_name.trimEnd());
+        } else if ((ub == 2) && (selectNidC == 1)) {
+            const nombre = Perso?.nombre;
+            setnombC(nombre);
+            setapell1C(Perso?.first_last_name);
+            setapell2C(Perso?.second_last_name);
+            ValidarinputNombC(nombre, val);
+            ValidarinputApp1C(Perso?.first_last_name);
+            ValidarinputApp2C(Perso?.second_last_name.trimEnd());
+        } else if ((ub == 1) && (selectNidA == 3)) {
+            cargarDatosC(val, Ub);
         }
-      });
-  };
+    } catch (error) {
+        console.error(error);
+        const confirmRetryFisica = window.confirm(
+            'Ocurrió un error al obtener los datos de la cédula. ¿Desea intentar de nuevo?'
+        );
 
-  const cargarDatosC = async (val, ub) => {
-    console.log(val, ub)
-    await fetch(URI + "comer/" + val)
-      .then((resp) => resp.json())
-      .then((data) => {
-        const Comer = data[ 0 ];
-        setComer(Comer);
-        console.log(Comer)
-        if (ub == 1 && selectNidA == 3) {
-          if (
-            Comer?.fantasy_name == "NULL" ||
-            Comer?.fantasy_name == null ||
-            Comer?.fantasy_name == "NA" ||
-            Comer?.fantasy_name == "N/A"
-          ) {
-            const nombreA = Comer?.business_name;
-            setnombA(nombreA);
-            ValidarinputNomb(nombreA, val);
-            setlblinputName("Nombre de Empresa o institucion");
-          } else if (
-            Comer?.fantasy_name != "NULL" ||
-            Comer?.fantasy_name != null ||
-            Comer?.fantasy_name != "NA" ||
-            Comer?.fantasy_name != "N/A"
-          ) {
-            const nombreE = Comer?.business_name;
-            const nombreF = Comer?.fantasy_name;
-            setinvisibleAp1("d-block col-md-4");
-            setlblinputName("Nombre de Empresa o institucion");
-            setlblapell1A("Nombre de Fantasía (Opcional)");
-            setapell2A("NO INDICA");
-            setnombA(nombreE);
-            setapell1A(nombreF);
-          } else if (
-            (Comer?.fantasy_name == "NULL" ||
-              Comer?.fantasy_name == null ||
-              Comer?.fantasy_name == "NA" ||
-              Comer?.fantasy_name == "N/A") &&
-            Comer?.business_name == null
-          ) {
-            const nombreE = Comer?.business_name;
-            const nombreF = Comer?.fantasy_name;
-            setinvisibleAp1("d-block col-md-4");
-            setlblinputName("Nombre de Empresa o institucion");
-            setlblapell1A("Nombre de Fantasía (Opcional)");
-            setapell2A("NO INDICA");
-            setnombA(nombreE);
-            setapell1A(nombreF);
-          }
-        } else if (ub == 2 && selectNidC == 3) {
-          console.log(Comer, 2, 3)
-          if (
-            Comer?.fantasy_name == "NULL" ||
-            Comer?.fantasy_name == null ||
-            Comer?.fantasy_name == "NA" ||
-            Comer?.fantasy_name == "N/A"
-          ) {
-            console.log("no hay NF")
-            const nombreC = Comer?.business_name;
-            setnombC(nombreC);
-            ValidarinputNombC(nombreC, val);
-            setlblinputNameC("Nombre de Empresa o institucion");
-            setinvisibleAp1C("d-block col-md-4");
-            setlblinputNameC("Nombre de Empresa o institucion");
-            setlblapell1C("Nombre de Fantasía (Opcional)");
-            setapell2C("NO INDICA");
-            setapell1C("");
-            setRsocial(nombreC);
-          } else if (
-            Comer?.fantasy_name != "NULL" ||
-            Comer?.fantasy_name != null ||
-            Comer?.fantasy_name != "NA" ||
-            Comer?.fantasy_name != "N/A"
-          ) {
-            console.log("Si hay NF y NC")
-            const nombreE = Comer?.business_name;
-            const nombreF = Comer?.fantasy_name;
-            setinvisibleAp1C("d-block col-md-4");
-            setlblinputNameC("Nombre de Empresa o institucion");
-            setlblapell1C("Nombre de Fantasía (Opcional)");
-            setapell2C("NO INDICA");
-            setnombC(nombreE);
-            ValidarinputNombC(nombreE, val);
-            setapell1C(nombreF);
-            setRsocial(nombreE);
-            setNfantasy(apell1C);
-          } else if (
-            (Comer?.fantasy_name == "NULL" ||
-              Comer?.fantasy_name == null ||
-              Comer?.fantasy_name == "NA" ||
-              Comer?.fantasy_name == "N/A") &&
-              Comer?.business_name == null
-          ) {
-            console.log("no hay NF ni NC")
-            const nombreE = Comer?.business_name;
-            const nombreF = Comer?.fantasy_name;
-            setinvisibleAp1C("d-block col-md-4");
-            setlblapell1C("Nombre de Fantasía (Opcional)");
-            setapell2C("NO INDICA");
-            setnombC(nombreE);
-            setapell1C(nombreF);
-            setRsocial(nombreE);
-            setNfantasy(apell1C);
-          }
-
-          console.log("nada")
-        } else if (ub == 2 && selectNidC == 1) {
-          cargarDatosP(val, ub);
+        if (confirmRetryFisica) {
+            cargarDatosP(val, ub); // Intentar de nuevo llamando a la función
         }
-      });
-  };
+    }
+}
 
+
+const cargarDatosC = async (val, ub) => {
+    console.log('En cargardatosC')
+    try {
+      const response = await fetch(URI + 'comer/' + val);
+      if (!response.ok) {
+          throw new Error('Ocurrió un error al obtener los datos de la cédula.');
+      }
+
+      const data = await response.json();
+      const Comer = data[0];
+      setComer(Comer);
+      console.log(ub);
+            if ((ub == 1) && (selectNidA == 3)) {
+              console.log('Primer if de comer')
+                if ((Comer?.fantasy_name === null || Comer?.fantasy_name === 'NULL' || Comer?.fantasy_name === 'NA' || Comer?.fantasy_name === 'N/A') && Comer?.business_name !== null) {
+                    setShowCompanyNameA(true);
+                    const nombreA = Comer?.business_name
+                    setnombA(nombreA)
+                    ValidarinputNomb(nombreA, val)
+                    setlblinputName('Nombre de Empresa o institucion')
+                    setinvisibleAp1("d-block col-md-4")
+                    setlblinputName('Nombre de Empresa o institucion')
+                    setlblapell1A('Nombre de Fantasía (Opcional)')
+                    setapell1A("NO INDICA");
+                    setapell2A("NO INDICA");
+                    console.log('si no hay nombre de fantasia')
+                } else if ((Comer?.fantasy_name == 'NULL') || (Comer?.fantasy_name == null) || (Comer?.fantasy_name == 'NA') || (Comer?.fantasy_name == 'N/A') && (Comer?.business_name == null)) {
+                    setShowCompanyNameA(false);
+                    const nombreB = ('NO INDICA')
+                    setinvisibleAp1("d-block col-md-4")
+                    setlblinputName('Nombre de Empresa o institucion')
+                    setlblapell1A('Nombre de Fantasía (Opcional)')
+                    setnombA(nombreB)
+                    setapell1A("NO INDICA");
+                    setapell2A("NO INDICA");
+                    ValidarinputNomb(nombreB, val)
+                    console.log('No hay nombre fantasia ni institucion')
+                } else if ((Comer?.fantasy_name != 'NULL') || (Comer?.fantasy_name != null) || (Comer?.fantasy_name != 'NA') || (Comer?.fantasy_name != 'N/A')) {
+                    setShowCompanyNameA(true);
+                    const nombreM = Comer?.business_name
+                    const nombreN = Comer?.fantasy_name
+                    setinvisibleAp1("d-block col-md-4")
+                    setlblinputName('Nombre de Empresa o institucion')
+                    setlblapell1A('Nombre de Fantasía (Opcional)')
+                    setnombA(nombreM)
+                    setapell1A(nombreN)
+                    setapell2A("NO INDICA");
+                    ValidarinputNomb(nombreM, val)
+                    console.log('Existen ambos')
+                }
+            } else if ((ub == 2) && (selectNidC == 3)) {
+                console.log('segundo if de comer')
+                if (
+                  (Comer?.fantasy_name === null || Comer?.fantasy_name === 'NULL' || Comer?.fantasy_name === 'NA' || Comer?.fantasy_name === 'N/A') &&
+                  Comer?.business_name !== null)
+                  {
+                    setShowCompanyNameC(true);
+                    const nombreC = Comer?.business_name
+                    setnombC(nombreC)
+                    ValidarinputNombC(nombreC, val)
+                    setlblinputNameC('Nombre de Empresa o institucion')
+                    setinvisibleAp1C("d-block col-md-4")
+                    setlblinputNameC('Nombre de Empresa o institucion')
+                    setlblapell1C('Nombre de Fantasía (Opcional)')
+                    setapell1C("NO INDICA");
+                    setapell2C("NO INDICA");
+                    setRsocial(nombreC);
+                    console.log('si no hay nombre de fantasia')
+                } else if ((Comer?.fantasy_name == 'NULL' || Comer?.fantasy_name == null || Comer?.fantasy_name == 'NA' || Comer?.fantasy_name == 'N/A') && Comer?.business_name == null ){
+                  setShowCompanyNameC(false);
+                  const nombreE = ('NO INDICA')
+                    setinvisibleAp1C("d-block col-md-5")
+                    setlblinputNameC('Nombre de Empresa o institucion')
+                    setlblapell1C('Nombre de Fantasía (Opcional)')
+                    setnombC(nombreE)
+                    setRsocial(nombreE);
+                    setapell1C("NO INDICA");
+                    setapell2C("NO INDICA");
+                    ValidarinputNombC(nombreE, val)
+                    console.log('No hay nombre fantasia ni institucion')
+                } else if ((Comer?.fantasy_name != 'NULL') || (Comer?.fantasy_name != null) || (Comer?.fantasy_name != 'NA') || (Comer?.fantasy_name != 'N/A')) {
+                    setShowCompanyNameC(true);
+                    const nombreH = Comer?.business_name
+                    const nombreJ = Comer?.fantasy_name
+                    setinvisibleAp1C("d-block col-md-4")
+                    setlblinputNameC('Nombre de Empresa o institucion')
+                    setlblapell1C('Nombre de Fantasía (Opcional)')
+                    setnombC(nombreH)
+                    setapell1C(nombreJ)
+                    setRsocial(nombreH);
+                    setapell2C("NO INDICA");
+                    ValidarinputNombC(nombreH, val)
+                    console.log('Existen ambos')
+                }
+            } else if ((ub == 2) && (selectNidC == 1)) {
+                cargarDatosP(val, ub)
+            }
+          } catch (error) {
+            console.error(error);
+            const confirmRetryJuridica = window.confirm(
+                'Ocurrió un error al obtener los datos de la cédula. ¿Desea intentar de nuevo?'
+            );
+    
+            if (confirmRetryJuridica) {
+                cargarDatosC(val, ub); // Intentar de nuevo llamando a la función
+            }
+        }
+    }
   //#endregion
 
   return (
@@ -1563,7 +1636,7 @@ const CompFormpres = () => {
             </div>
             <div id="divinputtoRegistro" className={hiddentelObser}>
               <label htmlFor="usobserv" className="form-label">
-                Observasión:
+                Observación:
               </label>
               <input
                 name="usobserv"
@@ -1595,7 +1668,6 @@ const CompFormpres = () => {
               onChange={(e) =>
                 input_TIDchange(e.target.selectedIndex, e.target.value)
               }
-              onClick={limpiardatosA}
               required>
               <option defaultValue="DEFAULT" value="0" disabled>
                 Seleccione...
@@ -1615,7 +1687,7 @@ const CompFormpres = () => {
               type="text"
               className={`form-control ${idclValid}`}
               id="inputCed"
-              defaultValue={ndiA}
+              value={ndiA}
               onChange={(e) => {
                 validarInputCedA(e.target.value, "1");
               }}
@@ -1629,6 +1701,7 @@ const CompFormpres = () => {
           </div>
         </div>
         <div className="row row my-3 ms-1">
+        {showCompanyNameA && (
           <div id="divinputName" className={classdivnomb}>
             <label htmlFor="inputName" className="form-label" id="lblinputName">
               {lblinputName}
@@ -1639,13 +1712,14 @@ const CompFormpres = () => {
               className={`form-control ${nclValid}`}
               readOnly={onlyRnombA}
               id="inputName"
-              defaultValue={nombA}
+              value={nombA}
               onChange={(e) => ValidarinputNomb(e.target.value, "1")}
               disabled={dehabil}
               required
             />
             <div className="invalid-feedback">{fbNameA}</div>
           </div>
+          )}
           <div id="divinput1erAp" className={invisibleAp1}>
             <label htmlFor="input1erAp" className="form-label">
               {lblapell1A}
@@ -1656,7 +1730,7 @@ const CompFormpres = () => {
               className={`form-control ${paclValid}`}
               readOnly={onlyRapell1A}
               id="input1erAp"
-              defaultValue={apell1A}
+              value={apell1A}
               onChange={(e) => ValidarinputApp1(e.target.value)}
               disabled={dehabil}
               required
@@ -1673,7 +1747,7 @@ const CompFormpres = () => {
               className={`form-control ${saclValid}`}
               readOnly={onlyRapell2A}
               id="input2doAp"
-              defaultValue={apell2A}
+              value={apell2A}
               onChange={(e) => ValidarinputApp2(e.target.value)}
               disabled={dehabil}
               required
@@ -1704,13 +1778,13 @@ const CompFormpres = () => {
               type="email"
               className={`form-control ${emclValid}`}
               id="inputEmail"
-              defaultValue={email}
+              value={email}
               required
               disabled={dehabilem1}
               onChange={(e) => validarInputEmail(e.target.value, 1)}
             />
             <div className="invalid-feedback">
-              Por favor, ingrese un correo electronico valido.
+              Por favor, ingrese un correo electronico válido.
             </div>
             <span id="erroremail2" className="fs-6"></span>
            
@@ -1766,7 +1840,6 @@ const CompFormpres = () => {
               disabled={dehabiltel1}
               onChange={(e) => ValidarinputTel(e.target.value, 1)}
             />
-            
           </div>
           <div className="col-md-3">
             <label htmlFor="inputTel2" className="form-label me-3">
@@ -2026,6 +2099,7 @@ const CompFormpres = () => {
           </div>
         </div>
         <div className="row my-3 ms-1">
+        {showCompanyNameC && (
           <div id="divinputNameC" className={classdivnombC}>
             <label
               htmlFor="inputNameC"
@@ -2045,6 +2119,7 @@ const CompFormpres = () => {
             <div className="invalid-feedback">{fbNameC}</div>
             <div className="fs-6 fw-bold lh-1 text-danger"></div>
           </div>
+          )}
           <div id="divinput1erApC" className={invisibleAp1C}>
             <label htmlFor="input1erApC" className="form-label">
               {lblapell1C}
